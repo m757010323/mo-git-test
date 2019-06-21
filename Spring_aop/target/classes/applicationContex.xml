@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--配置目标对象-->
+    <bean id="target" class="cn.mo.aop.Targetimpl"></bean>
+    <bean id="testdemo" class="cn.mo.aop.Testdemoimpl"></bean>
+    <!--配置切面-->
+    <bean id="Myaspect" class="cn.mo.aop.Myaspect"></bean>
+
+    <bean id="stringdemo" class="cn.mo.aop.Stringdemo"></bean>
+    <!--配置织入关系-->
+    <aop:config>
+        <!--引入Myaspect作为织入的切面对象-->
+        <aop:aspect ref="Myaspect">
+            <aop:pointcut id="hhh" expression="execution(* cn.mo.aop.*.*(..))"></aop:pointcut>
+            <!--引入前置方法 并设置增强的目标方法为target的test方法-->
+            <!--<aop:before method="before" pointcut="execution(* cn.mo.aop.*.*(..))"></aop:before>-->
+            <aop:around method="around" pointcut-ref="hhh"></aop:around>
+            <aop:after-returning method="afterruntning" returning="string" pointcut-ref="hhh"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

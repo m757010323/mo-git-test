@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.alibaba.com/schema/stat http://www.alibaba.com/schema/stat.xsd">
+
+    <!--Controller的组件扫描-->
+    <context:component-scan base-package="com.itheima">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--配置过滤器-->
+
+
+    <!--配置内部资源视图解析器-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--  /jsp/success.jsp  -->
+        <!--<property name="prefix" value="/jsp/"></property>-->
+        <property name="prefix" value="/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+        <property name="redirectContextRelative" value="true"></property>
+    </bean>
+   <!-- <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+            </list>
+        </property>
+    </bean>-->
+
+    <!--添加mvc注解驱动-->
+    <mvc:annotation-driven conversion-service="conversionService" />
+
+    <!--开放资源的访问 mapping是资源的请求 location是资源的访问-->
+    <!--<mvc:resources mapping="/js/**" location="/js/"/>-->
+
+    <!--springmvc先去找地址,如果找不到,交由tomcat找-->
+    <!--释放静态资源-->
+    <mvc:default-servlet-handler/>
+
+    <!--声明转换器-->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="com.itheima.convert.Dateconvert"></bean>
+            </list>
+        </property>
+    </bean>
+    <!--配置文件上传解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <property name="maxInMemorySize" value="500000"></property>
+     </bean>
+
+    <!--声明拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--对那些资源进行拦截操作-->
+            <mvc:mapping path="/**"/>
+            <bean class="com.itheima.interceptor.Myinterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!--配置简单异常处理器
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="defaultErrorView" value="error"></property>
+        <property name="exceptionMappings">
+            <map>
+                <entry key="java.lang.NumberFormatException" value="error1"></entry>
+            </map>
+        </property>
+    </bean>-->
+
+
+    <!--配置自定义异常处理器-->
+    <bean id="exceptionResolver" class="com.itheima.exception.MyExceptionResolver"/>
+</beans>
